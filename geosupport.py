@@ -1,0 +1,117 @@
+import os, subprocess, re
+import pandas as pd
+
+def geosupport(boro, houseNo, street,function = '1A', tpad='n', extend=''):
+    '''
+    Python wrapper for DCP's GeoSupport Desktop Edition, Linux version downloaded from
+    DCP's website: http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
+    GeoSupport User Guide: http://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/upg.pdf
+    
+    input:  boro is the borough code, integer 1-5
+            boro = 1 (Manhattan), 2 (Bronx), 3 (Brooklyn), 4 (Queens), 5 (Staten Island)
+            houseNO is the address house number
+            street is the address street name
+            function is the GeoSupport function that takes address or non-addressable
+            place name as input. (see GeoSuport User Guide for mor info) 
+            function = 1A, 1, 1E (1A is the default)
+            tpad: y if you want TPAD data, n otherwise (see GeoSupport User Guide)
+            extend: y if you want Extended Work Area (see GeoSupport User Guide)
+    
+    returns output from GeoSupport
+    '''
+    
+    # path to geosupport files and executables
+    path = '/home/deena/geosupport/version-16b_16.2/'
+
+    # set environment variables
+    my_env = os.environ.copy()
+    my_env["LD_LIBRARY_PATH"] = path+'lib'
+    my_env["GOEFILES"] = path+'fls/'
+
+    # path to geosupport executable
+    geosupport = path+'bin/c_client'
+
+    # open subprocess to run geosupport
+    p = subprocess.Popen([geosupport],
+                         env=my_env, 
+                         stdout=subprocess.PIPE,
+                         stdin=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+
+    
+    exit = 'x'
+    
+    inputstring = '{}\n{}\n{}\n{}\n{}\n{}\n{}\n'.format(function,
+                                                        boro,
+                                                        houseNo,
+                                                        street,
+                                                        tpad,
+                                                        extend,
+                                                        exit).encode('utf-8')
+    # read in input data
+    stdout_data = p.communicate(input=inputstring)
+
+    # output
+    return stdout_data[0].splitlines(True)[14:]
+
+
+def geosupportBatch(df,boro='boro',houseNo='houseNo',street='street'):
+    ''' 
+    Python wrapper for DCP's GeoSupport Desktop Edition, Linux version downloaded from
+    DCP's website: http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
+    GeoSupport User Guide: http://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/upg.pdf
+    
+    Batch processing using GeoSupport function 1A, and returning BBL and BIN
+    
+    input:  dataframe df, with column names containing information on 
+            the borough (boro = 1-5), 
+            address house number (houseNo),
+            and address street name (street).
+    
+    returned dataframe will have two additional columns: geocodedBBL and geocodedBIN.
+    '''
+    # path to geosupport files and executables
+    path = '/home/deena/geosupport/version-16b_16.2/'
+
+    # set environment variables
+    my_env = os.environ.copy()
+    my_env["LD_LIBRARY_PATH"] = path+'lib'
+    my_env["GOEFILES"] = path+'fls/'
+
+    # path to geosupport executable
+    expath = path+'bin/c_client'
+
+    def hitGeoS(df):
+        # open subprocess to run geosupport
+        p = subprocess.Popen([expath],
+                             env=my_env, 
+                             stdout=subprocess.PIPE,
+                             stdin=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        
+        # this works with function 1A which takes address or non-addressable place name
+        # as input and returns property related data including BIN, BBL
+        inputstring = '{}\n{}\n{}\n{}\n{}\n{}\n{}\n'.format('1A',
+                                                            df[boro],
+                                                            df[houseNo],
+                                                            df[street],
+                                                            '','','x').encode('utf-8')
+        try:
+            # read input data to geosupport
+            stdout_data = p.communicate(input=inputstring)
+            # search for BBL data in output
+            m = re.search('\[  6\]: BBL .+[\n]',stdout_data[0])
+            BBL = int(m.group()[-11:-1])
+            # search for BIN data in output
+            m = re.search('BIN OF INPUT ADDRESS .+[\n]',stdout_data[0])
+            BIN = int(m.group()[-8:-1])
+        except:
+            m = re.search('Error Message .+[\n]',stdout_data[0])
+            BBL = m.group()
+            BIN = m.group()
+
+        return BBL,BIN
+    
+    df[['geocodedBBL','geocodedBIN']] = df.apply(hitGeoS,axis=1).apply(pd.Series)
+    return df
+    
