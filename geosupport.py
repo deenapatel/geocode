@@ -1,27 +1,36 @@
 import os, subprocess, re
 import pandas as pd
 
+ # path to geosupport files and executables
+path = '/home/deena/geosupport/version-16b_16.2/'
+
 def geosupport(boro, houseNo, street,function = '1A', tpad='n', extend=''):
     '''
-    Python wrapper for DCP's GeoSupport Desktop Edition, Linux version downloaded from
-    DCP's website: http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
+    Python wrapper for DCP's GeoSupport Desktop Edition.
+    Before using this, download the Linux version from DCP's website: 
+    http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
+    And point 'path' variable to where the downloaded files live.
+    
+    More information on using GeoSupport can be found in their user guide
     GeoSupport User Guide: http://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/upg.pdf
     
-    input:  boro is the borough code, integer 1-5
-            boro = 1 (Manhattan), 2 (Bronx), 3 (Brooklyn), 4 (Queens), 5 (Staten Island)
+    input:  boro is the borough code, integer 1-5:
+                1 (Manhattan), 2 (Bronx), 3 (Brooklyn), 4 (Queens), 5 (Staten Island)
+            
             houseNO is the address house number
+            
             street is the address street name
-            function is the GeoSupport function that takes address or non-addressable
-            place name as input. (see GeoSuport User Guide for mor info) 
+            
+            function is one of the GeoSupport functions that takes address or non-addressable
+            place name as input. (see GeoSuport User Guide for more info) 
             function = 1A, 1, 1E (1A is the default)
+            
             tpad: y if you want TPAD data, n otherwise (see GeoSupport User Guide)
+            
             extend: y if you want Extended Work Area (see GeoSupport User Guide)
     
     returns output from GeoSupport
     '''
-    
-    # path to geosupport files and executables
-    path = '/home/deena/geosupport/version-16b_16.2/'
 
     # set environment variables
     my_env = os.environ.copy()
@@ -57,9 +66,10 @@ def geosupport(boro, houseNo, street,function = '1A', tpad='n', extend=''):
 
 def geosupportBatch(df,boro='boro',houseNo='houseNo',street='street'):
     ''' 
-    Python wrapper for DCP's GeoSupport Desktop Edition, Linux version downloaded from
-    DCP's website: http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
-    GeoSupport User Guide: http://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/upg.pdf
+    Python wrapper for DCP's GeoSupport Desktop Edition.
+    Before using this, download the Linux version from DCP's website: 
+    http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
+    And point 'path' variable to where the downloaded files live.
     
     Batch processing using GeoSupport function 1A, and returning BBL and BIN
     
@@ -70,8 +80,6 @@ def geosupportBatch(df,boro='boro',houseNo='houseNo',street='street'):
     
     returned dataframe will have two additional columns: geocodedBBL and geocodedBIN.
     '''
-    # path to geosupport files and executables
-    path = '/home/deena/geosupport/version-16b_16.2/'
 
     # set environment variables
     my_env = os.environ.copy()

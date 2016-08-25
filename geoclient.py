@@ -4,7 +4,7 @@ import pandas as pd
 
 def geoclientBatch(df,houseNo='houseNo',street='street',boro='boro'):
     '''
-    Uses DOITT's GeoClient (the web interface to DCP's GeoSupport)     
+    Uses DOITT's GeoClient (the web API to DCP's GeoSupport)     
     via the python wrapper https://github.com/talos/nyc-geoclient
     to geocode a dataframe df with columns number, street, and boro.
     
