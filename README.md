@@ -3,9 +3,10 @@ Accessing the NYC geocoders via Python.
 
 **geosupport.py** contains two functions (single address lookup and batch lookup) for interfacing with DCP's desktop GeoSupport. Before using them, you'll need to:
 
-1. download the __Linux version__ from [DCP's website](http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page)
-2. point the 'path' variable to where the downloaded files live on your computer.
-Note: You'll need to be running linux to use this. I use [Ubuntu](https://www.ubuntu.com/download) running as a VM via [VirtualBox](https://www.virtualbox.org/wiki/Downloads) hosted on my Windows desktop.
+1. Download the __Linux version__ from [DCP's website](http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page)
+2. Point the 'path' variable to where the downloaded files live on your computer.
+
+Note: You'll need to be running Linux to use this. I use [Ubuntu](https://www.ubuntu.com/download) running as a VM via [VirtualBox](https://www.virtualbox.org/wiki/Downloads) hosted on my Windows desktop.
 
 **geoclient.py** contains a function which uses the [python wrapper](https://github.com/talos/nyc-geoclient) for the GeoClient API to geocode all addresses in a pandas dataframe. The [GeoClient API is maintained by DoITT](https://developer.cityofnewyork.us/api/geoclient-api). You should register for your own API key before using it.
 
