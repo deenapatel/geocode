@@ -3,7 +3,7 @@ Accessing the NYC geocoders via Python.
 
 **geosupport.py** contains two functions (single address lookup and batch lookup) for interfacing with DCP's desktop GeoSupport. Before using them, you'll need to:
 
-1. download the Linux version from DCP's website: http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page
+1. download the __Linux version__ from [DCP's website](http://www1.nyc.gov/site/planning/data-maps/open-data/dwn-gde-home.page)
 2. point the 'path' variable to where the downloaded files live on your computer.
 Note: You'll need to be running linux to use this. I use [Ubuntu](https://www.ubuntu.com/download) running as a VM via [VirtualBox](https://www.virtualbox.org/wiki/Downloads) hosted on my Windows desktop.
 
