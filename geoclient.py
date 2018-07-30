@@ -1,6 +1,8 @@
 from nyc_geoclient import Geoclient
 import warnings, sys
 import pandas as pd
+from requests.exceptions import ProxyError
+
 
 def geoclientBatch(df,houseNo='houseNo',street='street',boro='boro'):
     '''
