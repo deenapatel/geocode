@@ -14,17 +14,48 @@ def geoclientBatch(df,houseNo='houseNo',street='street',boro='boro'):
     geoKey = '051f93e4125df4bae4f7c57517e62344'
     g = Geoclient(geoID,geoKey)
     warnings.filterwarnings('ignore') #do not display warnings
-    
+       
     def hitGeoC(df):
+        # try to query the Geoclient API
         try:
-            x = g.address(df[houseNo],df[street],df[boro])
-            BBL = x['bbl']
-            BIN = x['buildingIdentificationNumber']
+            x = g.address(df[houseNo], df[street], df[boro])
+
+            # try to get BBL
+            try:
+                BBL = x['bbl']
+            # if there is a proxy error, display "---ProxyError---"
+            except ProxyError:
+                BBL = '---ProxyError---'
+            # if there is any other error, display "---InvalidAddress---"
+            except:
+                BBL = ''
+
+            # try to get BIN
+            try:
+                BIN = x['buildingIdentificationNumber']
+            # if there is a proxy error, display "---ProxyError---"
+            except ProxyError:
+                BIN = '---ProxyError---'
+            # if there is any other error, display "---InvalidAddress---"
+            except:
+                BIN = ''
+
+        # if there is a proxy error, display "---ProxyError---" for every value
+        except ProxyError:
+            error_message = '---ProxyError---'
+            BBL = error_message
+            BIN = error_message
+
+        # if there is any other error, display "---InvalidAddress---" for every value
         except:
-            e = sys.exc_info()[0]
-            BBL = ( "Error: %s" % e )
-            BIN = BBL
+            error_message = '---InvalidAddress---'
+            BBL = error_message
+            BIN = error_message
+
+        # return the geocoded columns
         return BBL,BIN
+
+    # applies the "hitGeoC" function to every row in the DataFrame
+    df[['geoBBL','geoBIN']] = df.apply(hitGeoC,axis=1).apply(pd.Series)
     
-    df[['geocodedBBL','geocodedBIN']] = df.apply(hitGeoC,axis=1).apply(pd.Series)
     return df
