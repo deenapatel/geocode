@@ -2,7 +2,7 @@ import os, subprocess, re
 import pandas as pd
 
  # path to geosupport files and executables
-path = '/home/deena/geosupport/version-16b_16.2/'
+path = '/home/deena/geosupport/version-20d_20.4/'
 
 def geosupport(boro, houseNo, street,function = '1A', tpad='n', extend=''):
     '''
@@ -35,7 +35,7 @@ def geosupport(boro, houseNo, street,function = '1A', tpad='n', extend=''):
     # set environment variables
     my_env = os.environ.copy()
     my_env["LD_LIBRARY_PATH"] = path+'lib'
-    my_env["GOEFILES"] = path+'fls/'
+    my_env["GEOFILES"] = path+'fls/'
 
     # path to geosupport executable
     geosupport = path+'bin/c_client'
@@ -84,7 +84,7 @@ def geosupportBatch(df,boro='boro',houseNo='houseNo',street='street'):
     # set environment variables
     my_env = os.environ.copy()
     my_env["LD_LIBRARY_PATH"] = path+'lib'
-    my_env["GOEFILES"] = path+'fls/'
+    my_env["GEOFILES"] = path+'fls/'
 
     # path to geosupport executable
     expath = path+'bin/c_client'
@@ -108,10 +108,10 @@ def geosupportBatch(df,boro='boro',houseNo='houseNo',street='street'):
             # read input data to geosupport
             stdout_data = p.communicate(input=inputstring)
             # search for BBL data in output
-            m = re.search('\[  6\]: BBL .+[\n]',stdout_data[0])
+            m = re.search('\[  6\]: Bbl .+[\n]',stdout_data[0])
             BBL = int(m.group()[-11:-1])
             # search for BIN data in output
-            m = re.search('BIN OF INPUT ADDRESS .+[\n]',stdout_data[0])
+            m = re.search('Bin Of Input Address .+[\n]',stdout_data[0])
             BIN = int(m.group()[-8:-1])
         except:
             m = re.search('Error Message .+[\n]',stdout_data[0])
