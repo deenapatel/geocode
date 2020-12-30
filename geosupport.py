@@ -107,14 +107,15 @@ def geosupportBatch(df,boro='boro',houseNo='houseNo',street='street'):
         try:
             # read input data to geosupport
             stdout_data = p.communicate(input=inputstring)
+            output = stdout_data[0].decode('utf-8')
             # search for BBL data in output
-            m = re.search('\[  6\]: Bbl .+[\n]',stdout_data[0])
+            m = re.search('\[  6\]: Bbl .+[\n]',output)
             BBL = int(m.group()[-11:-1])
             # search for BIN data in output
-            m = re.search('Bin Of Input Address .+[\n]',stdout_data[0])
+            m = re.search('Bin Of Input Address .+[\n]',output)
             BIN = int(m.group()[-8:-1])
         except:
-            m = re.search('Error Message .+[\n]',stdout_data[0])
+            m = re.search('Error Message .+[\n]',output)
             BBL = m.group()
             BIN = m.group()
 
